@@ -1,0 +1,155 @@
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:20px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0"
+                   style="background-color:#ffffff; border-radius:6px; overflow:hidden;">
+                <tr>
+                    <td style="padding:24px; text-align:center; background-color:##palette.glpi_mainmenu_bg##; color:##palette.glpi_mainmenu_fg##;">
+                        <table cellpadding="0" cellspacing="0" style="width:100%; min-width: 320px;">
+                            <tr>
+                                <td style="text-align: left;">
+                                    <a href="##glpi.url##" style="color: white;font-size: 22px;">
+                                        <img src="##glpi.logo##" alt="GLPI" height="50" style="height: 50px;">
+                                    </a>
+                                </td>
+                                <td style="text-align: right">
+                                    <h1 style="color:##palette.glpi_mainmenu_fg##;margin:0; font-size:22px;">
+                                        CronGuard Report
+                                    </h1>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:24px; color:#333333; font-size:15px; line-height:1.6;">
+                        <h2 style="margin-top:0; color:#212529;">
+                            ⚠️ Stuck CronTask detected
+                        </h2>
+
+                        <p style="margin:0 0 20px 0; color:#495057;">
+                            CronGuard detected that the following CronTask appears to be stuck.
+                            The details are listed below.
+                        </p>
+
+                        <table width="100%" cellspacing="0" cellpadding="0"
+                               style="margin-bottom:20px; border:1px solid #dee2e6;">
+
+                            <tr>
+                                <td style="
+            padding:12px;
+            color:#ffffff;
+            font-weight:bold;
+            background-color:
+            ##IFcrontask.restarted=1##
+            #198754
+            ##ENDIFcrontask.restarted##
+            ##ELSEcrontask.restarted##
+            #dc3545
+            ##ENDELSEcrontask.restarted##;
+        ">
+
+                                    ##IFcrontask.restarted=1##
+                                    ✔ Automatic restart successful
+                                    ##ENDIFcrontask.restarted##
+
+                                    ##ELSEcrontask.restarted##
+                                    ✖ Automatic restart failed
+                                    ##ENDELSEcrontask.restarted##
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:15px;">
+
+                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="padding:6px 0; color:#6c757d;">
+                                                CronTask
+                                            </td>
+                                            <td style="padding:6px 0;">
+                                                ##crontask.name##
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td style="padding:6px 0; color:#6c757d;">
+                                                Last execution
+                                            </td>
+                                            <td style="padding:6px 0;">
+                                                ##crontask.lastrun##
+                                            </td>
+                                        </tr>
+
+                                    </table>
+
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <div style="
+    margin-top:20px;
+    padding:15px;
+    background:#fff8e1;
+    border-left:4px solid #ffc107;
+    color:#856404;
+">
+
+                            <strong>Recommendation</strong><br><br>
+
+                            Please verify that this CronTask is operating correctly.
+                            If the automatic restart was unsuccessful, manual intervention may be required.
+
+                        </div>
+
+                        <div style="margin-top:25px; text-align:center;">
+
+                            <a href="##crontask.url##"
+                               style="
+            display:inline-block;
+            background-color:#0d6efd;
+            color:#ffffff;
+            text-decoration:none;
+            padding:12px 24px;
+            border-radius:4px;
+            font-weight:bold;
+        ">
+                                Open CronTask
+                            </a>
+
+                        </div>
+
+                        <div style="
+    margin-top:20px;
+    padding:15px;
+    background:#f8f9fa;
+    border:1px solid #dee2e6;
+    color:#495057;
+">
+
+                            <strong>Button not working?</strong><br><br>
+
+                            If clicking the button above does not work, copy and paste the following URL into your web browser:
+
+                            <br><br>
+
+                            <div style="
+        font-family:Consolas, Monaco, monospace;
+        word-break:break-all;
+        background:#ffffff;
+        border:1px solid #dee2e6;
+        padding:10px;
+        color:#0d6efd;
+    ">
+                                ##crontask.url##
+                            </div>
+
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

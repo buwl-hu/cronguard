@@ -1,0 +1,130 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+<div class="hr-text">
+    <i class="ti ti-clock-shield"></i>
+    <span>{{ __('CronGuard Settings', 'cronguard') }}</span>
+</div>
+
+{{ fields.numberField('stuck_timeout', stuck_timeout, label = __('GLPI Cron Task Timeout (second)', 'cronguard'), options = {}) }}
+
+<div class="hr-text">
+    <i class="ti ti-stopwatch"></i>
+    <span>{{ __('CronGuard Cron Job Examples', 'cronguard') }}</span>
+</div>
+<div class="row">
+    <div class="form-field row align-items-center col-12 col-xxl-6 col-sm-6  mb-2">
+        <label class="col-form-label col-xxl-5 text-xxl-end " for="cron-job-php-file">
+            {{ __('Cron Job PHP file path','cronguard') }}
+        </label>
+
+        <div class="col-xxl-7  field-container">
+            <div class="btn-group btn-group-sm d-flex">
+                <input type="text" id="cron-job-php-file" class="form-control "
+                       name="_cron_job_php-file"
+                       value="{{ cron_php_file }}"
+                       readonly="">
+
+                <div class="btn btn-outline-secondary"
+                     onclick="copyDisclosablePasswordFieldToClipboard('cron-job-php-file')">
+                    <i class="ti ti-clipboard-copy disclose"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-field row align-items-center col-12 col-xxl-6 col-sm-6  mb-2">
+        <label class="col-form-label col-xxl-5 text-xxl-end " for="cron-job-log-file">
+            {{ __('Cron Job log file path','cronguard') }}
+        </label>
+
+        <div class="col-xxl-7  field-container">
+            <div class="btn-group btn-group-sm d-flex">
+                <input type="text" id="cron-job-log-file" class="form-control "
+                       name="_cron_job_log-file"
+                       value="{{ cron_log_file }}"
+                       readonly="">
+
+                <div class="btn btn-outline-secondary"
+                     onclick="copyDisclosablePasswordFieldToClipboard('cron-job-log-file')">
+                    <i class="ti ti-clipboard-copy disclose"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row">
+    {% for cron_job in cron_jobs %}
+        <div class="form-field row align-items-center col-12 col-xxl-6 col-sm-6  mb-2">
+            <label class="d-flex align-items-center justify-content-end col-form-label col-xxl-5 text-xxl-end "
+                   for="cron-job-{{ loop.index }}">
+                {% if cron_job.logo %}
+                    <img src="{{ cron_job.logo }}" style="height: 1.2em;" class="rounded me-1">
+                {% endif %}
+                {{ cron_job.text }}
+            </label>
+
+            <div class="col-xxl-7  field-container">
+                <div class="btn-group btn-group-sm d-flex">
+                    <input type="text" id="cron-job-{{ loop.index }}" class="form-control "
+                           name="_cron_job_{{ loop.index }}"
+                           value="{{ cron_job.value }}"
+                           readonly="">
+
+                    <div class="btn btn-outline-secondary"
+                         onclick="copyDisclosablePasswordFieldToClipboard('cron-job-{{ loop.index }}')">
+                        <i class="ti ti-clipboard-copy disclose"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="hr-text">
+    <i class="ti ti-bell"></i>
+    <span>{{ __('CronGuard Notification', 'cronguard') }}</span>
+</div>
+
+<div class="form-field row align-items-center col-12 col-sm-6 mb-2">
+    <label class="col-form-label col-xxl-5 text-xxl-end">
+        {{ __('Email Notification', 'cronguard') }}
+    </label>
+
+    <div class="col-xxl-7 field-container text-start">
+        <a href="{{ notification_url }}" class="btn btn-primary text-start">
+            <i class="ti ti-bell-cog me-2"></i>
+            {{ __('Setup Notification', 'cronguard') }}
+        </a>
+    </div>
+</div>
+
+<div class="hr-text">
+    <i class="ti ti-mail-forward"></i>
+    <span>{{ __('CronGuard Recipients', 'cronguard') }}</span>
+</div>
+
+<div class="text-start">
+    {% if recipients is empty %}
+        <div class="alert bg-warning d-flex align-items-center justify-content-between">
+            No recipients set up yet
+            <a href="{{ group_url }}" class="btn btn-primary text-start">
+                <i class="ti ti-mail-cog me-2"></i>
+                {{ __('Setup Recipients', 'cronguard') }}
+            </a>
+        </div>
+    {% else %}
+        <div class="mb-2">
+            {% for user in recipients %}
+                <a href="{{ cfg_glpi.url_base }}/front/user.form.php?id={{ user.id }}" class="btn btn-secondary me-2">
+                    <i class="ti ti-user me-2"></i>
+                    {{ user.name }} &lt;{{ user.email }}&gt;
+                </a>
+            {% endfor %}
+        </div>
+        <a href="{{ group_url }}" class="btn btn-primary text-start">
+            <i class="ti ti-mail-cog me-2"></i>
+            {{ __('Change Recipients', 'cronguard') }}
+        </a>
+    {% endif %}
+</div>
