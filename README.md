@@ -6,7 +6,7 @@ SPDX-License-Identifier: GPL-2.0-or-later
 -->
 
 <p align="center">
-  <img src="pics/brand-logo.png" alt="CronGuard Logo" width="200">
+  <img src="pics/brand-logo.png" alt="CronGuard Logo">
 </p>
 
 # CronGuard GLPI Plugin
