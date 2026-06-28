@@ -1,5 +1,9 @@
 <?php
 
+// SPDX-FileCopyrightText: 2026 2026 Buwl.hu
+//
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 use Glpi\Application\View\TemplateRenderer;
 
 if (!defined('PLUGIN_CRONGUARD_DIR')) {

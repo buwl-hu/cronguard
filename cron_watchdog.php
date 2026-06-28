@@ -1,5 +1,9 @@
 <?php
 
+// SPDX-FileCopyrightText: 2026 2026 Buwl.hu
+//
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 $config_file = __DIR__ . '/../../config/config_db.php';
 
 if (!file_exists($config_file)) {
