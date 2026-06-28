@@ -83,48 +83,64 @@
 
 <div class="hr-text">
     <i class="ti ti-bell"></i>
-    <span>{{ __('CronGuard Notification', 'cronguard') }}</span>
+    <span>{{ __('CronGuard Notifications', 'cronguard') }}</span>
 </div>
 
-<div class="form-field row align-items-center col-12 col-sm-6 mb-2">
-    <label class="col-form-label col-xxl-5 text-xxl-end">
+<div class="form-field row align-items-center col-12 mb-2">
+    <label class="col-form-label col-xxl-2 text-xxl-end">
         {{ __('Email Notification', 'cronguard') }}
     </label>
 
     <div class="col-xxl-7 field-container text-start">
-        <a href="{{ notification_url }}" class="btn btn-primary text-start">
-            <i class="ti ti-bell-cog me-2"></i>
-            {{ __('Setup Notification', 'cronguard') }}
+        {{ notification.name }}
+        <a href="{{ notification.url }}" class="btn btn-sm btn-primary text-start ms-1">
+            <i class="ti ti-bell-cog me-1"></i>
+            {{ __('Notification Settings', 'cronguard') }}
         </a>
     </div>
 </div>
 
-<div class="hr-text">
-    <i class="ti ti-mail-forward"></i>
-    <span>{{ __('CronGuard Recipients', 'cronguard') }}</span>
-</div>
+<div class="form-field row align-items-center col-12 mb-2">
+    <label class="col-form-label col-xxl-2 text-xxl-end">
+        {{ __('Email Recipients', 'cronguard') }}
+    </label>
 
-<div class="text-start">
-    {% if recipients is empty %}
-        <div class="alert bg-warning d-flex align-items-center justify-content-between">
-            No recipients set up yet
-            <a href="{{ group_url }}" class="btn btn-primary text-start">
-                <i class="ti ti-mail-cog me-2"></i>
-                {{ __('Setup Recipients', 'cronguard') }}
-            </a>
-        </div>
-    {% else %}
-        <div class="mb-2">
+    <div class="col-xxl-7 field-container text-start">
+        {% if recipients is empty %}
+            <div class="alert bg-warning d-flex align-items-center justify-content-between">
+                {% if has_original_group %}
+                    No recipients set up yet
+                {% endif %}
+                <a href="{{ recipients_url }}" class="btn btn-primary text-start">
+                    <i class="ti ti-mail-cog me-1"></i>
+                    {{ __('Setup Recipients', 'cronguard') }}
+                </a>
+            </div>
+        {% else %}
             {% for user in recipients %}
-                <a href="{{ cfg_glpi.url_base }}/front/user.form.php?id={{ user.id }}" class="btn btn-secondary me-2">
-                    <i class="ti ti-user me-2"></i>
+                <a href="{{ cfg_glpi.url_base }}/front/user.form.php?id={{ user.id }}"
+                   class="btn btn-sm btn-secondary me-1">
+                    <i class="ti ti-user me-1"></i>
                     {{ user.name }} &lt;{{ user.email }}&gt;
                 </a>
             {% endfor %}
-        </div>
-        <a href="{{ group_url }}" class="btn btn-primary text-start">
-            <i class="ti ti-mail-cog me-2"></i>
-            {{ __('Change Recipients', 'cronguard') }}
+            <a href="{{ recipients_url }}" class="btn btn-sm btn-primary text-start">
+                <i class="ti ti-mail-cog me-1"></i>
+                {{ __('Change Recipients', 'cronguard') }}
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="form-field row align-items-center col-12 mb-2">
+    <label class="col-form-label col-xxl-2 text-xxl-end">
+        {{ __('Email Template', 'cronguard') }}
+    </label>
+
+    <div class="col-xxl-7 field-container text-start">
+        <a href="{{ template_url }}" class="btn btn-sm btn-primary text-start">
+            <i class="ti ti-template me-1"></i>
+            {{ __('Email template', 'cronguard') }}
         </a>
-    {% endif %}
+    </div>
 </div>

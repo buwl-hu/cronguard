@@ -12,6 +12,10 @@ class PluginCronguardConfig extends CommonDBTM
 
     static protected ?self $_instance = null;
     static public $rightname = 'config';
+    static protected ?CronTask $cron_task = null;
+    static protected ?int $notification_id = null;
+    static protected ?int $group_id = null;
+    static protected ?array $targets = null;
 
     public static function getInstance(): self
     {
@@ -101,22 +105,28 @@ SQL;
 
     public static function createUserGroup(): int
     {
+        if (!is_null(self::$group_id)) return self::$group_id;
         $group = new Group();
         $input = ['code' => 'cronguard-group'];
-        if ($found = $group->find($input)) return (int)array_values($found)[0]['id'];
-        return $group->add(array_merge($input, [
+        if ($found = $group->find($input)) {
+            return (self::$group_id = (int)array_values($found)[0]['id']);
+        }
+        return (self::$group_id = $group->add(array_merge($input, [
             'is_recursive' => 1,
             'name' => 'CronGuard Recipients',
             'comment' => 'Automatically created group by CronGuard plugin'
-        ]));
+        ])));
     }
 
     public static function createNotification(): int
     {
+        if (!is_null(self::$notification_id)) return self::$notification_id;
         $notification = new Notification();
         $event = \GlpiPlugin\CronGuard\CronTask::EVENT_RESTARTED;
         $input = ['event' => $event, 'itemtype' => CronTask::class];
-        if ($found = $notification->find($input)) return (int)array_values($found)[0]['id'];
+        if ($found = $notification->find($input)) {
+            return (self::$notification_id = (int)array_values($found)[0]['id']);
+        }
 
         $notification_id = $notification->add(array_merge($input, [
             'name' => 'CronTask Restarted (CronGuard)',
@@ -165,7 +175,7 @@ SQL;
             'is_exclusion' => 0
         ]);
 
-        return $notification_id;
+        return (self::$notification_id = $notification_id);
     }
 
     public static function showConfigForm($item): false
@@ -180,25 +190,28 @@ SQL;
                 'id' => $group_id,
                 'forcetab' => 'Group_User$1'
             ]);
-        $recipients = self::getGroupUsersWithDefaultEmail();
-        $recipients[] = [
-            'id' => 0,
-            'name' => $CFG_GLPI['admin_email_name'] ?? 'Admin',
-            'email' => $CFG_GLPI['admin_email'],
-        ];
 
         $notification_id = self::createNotification();
-        $notification_url = "{$CFG_GLPI['url_base']}/front/notification.form.php?" . http_build_query([
-                'id' => $notification_id
-            ]);
+        $notification_url = fn(array $query = []) => "{$CFG_GLPI['url_base']}/front/notification.form.php?" . http_build_query(array_merge($query, ['id' => $notification_id]));
+        $notification = new Notification();
+        $notification->getFromDB($notification_id);
 
         TemplateRenderer::getInstance()->display(
             '@cronguard/config.html.twig',
             [
                 self::FIELD_STUCK_TIMEOUT => $config->fields[self::FIELD_STUCK_TIMEOUT] ?? 1800,
-                'group_url' => $group_url,
-                'notification_url' => $notification_url,
-                'recipients' => $recipients,
+                'recipients' => self::getRecipients($has_original_group),
+                'has_original_group' => $has_original_group,
+
+                'notification' => [
+                    'id' => $notification_id,
+                    'name' => $notification->getName(),
+                    'url' => $notification_url(['forcetab' => 'Notification$main'])
+                ],
+
+                'recipients_url' => $has_original_group ? $group_url : $notification_url(['forcetab' => 'NotificationTarget$1']),
+                'template_url' => $notification_url(['forcetab' => 'Notification_NotificationTemplate$1']),
+
                 'cfg_glpi' => $CFG_GLPI,
                 'cron_jobs' => self::getCronJobExamples(),
                 'cron_php_file' => self::cronPhpFile(),
@@ -209,6 +222,46 @@ SQL;
         $config->showFormButtons(['candel' => false]);
 
         return false;
+    }
+
+    static function getCronTask(): ?CronTask
+    {
+        if (is_null(self::$cron_task)) {
+            $cron_task = new CronTask();
+            if (!$found = $cron_task->find(['itemtype' => PluginCronguardCron::class, 'name' => 'cronguard'])) return null;
+            $cron_task->getFromDB(array_values($found)[0]['id']);
+            self::$cron_task = $cron_task;
+        }
+        return self::$cron_task;
+    }
+
+    static function getRecipients(&$has_original_group = false): array
+    {
+        global $CFG_GLPI;
+
+        $recipients = [];
+        foreach (self::getTargets() as $target) {
+            if ($target['type'] == Notification::USER_TYPE && $target['items_id'] == Notification::GLOBAL_ADMINISTRATOR) {
+                $recipients[] = [
+                    'id' => 0,
+                    'name' => $CFG_GLPI['admin_email_name'] ?? 'Admin',
+                    'email' => $CFG_GLPI['admin_email'],
+                ];
+            }
+            if ($target['type'] == Notification::GROUP_TYPE && $target['items_id'] = self::createUserGroup()) {
+                $has_original_group = true;
+                $recipients = array_merge($recipients, self::getGroupUsersWithDefaultEmail());
+            }
+        }
+        return $recipients;
+    }
+
+    static function getTargets(): array
+    {
+        if (!is_null(self::$targets)) return self::$targets;
+        $notification_id = self::createNotification();
+        $target = new NotificationTarget();
+        return (self::$targets = $target->find(['notifications_id' => $notification_id]));
     }
 
     static function get($key)
