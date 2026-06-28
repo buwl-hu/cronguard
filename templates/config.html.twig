@@ -7,10 +7,106 @@
 
 {{ fields.numberField('stuck_timeout', stuck_timeout, label = __('GLPI Cron Task Timeout (second)', 'cronguard'), options = {}) }}
 
+<div class="form-field row align-items-center col-12 col-sm-6 mb-2">
+    <label class="col-form-label col-xxl-5 text-xxl-end">
+        {{ __('CronTask Frequency', 'cronguard') }}
+    </label>
+
+    <div class="col-xxl-7 field-container text-start">
+        {{ task.frequency }}
+        <a href="{{ task.url }}" class="btn btn-sm btn-primary text-start ms-1">
+            <i class="ti ti-settings-automation me-1"></i>
+            {{ __('CronTask Settings', 'cronguard') }}
+        </a>
+    </div>
+</div>
+
+<div class="hr-text">
+    <i class="ti ti-bell"></i>
+    <span>{{ __('CronGuard Notifications', 'cronguard') }}</span>
+</div>
+
+<div class="form-field row align-items-center col-12 mb-2">
+    <label class="col-form-label col-xxl-2 text-xxl-end">
+        {{ __('Email Notification', 'cronguard') }}
+    </label>
+
+    <div class="col-xxl-10 field-container text-start">
+        {{ notification.name }}
+        <a href="{{ notification.url }}" class="btn btn-sm btn-primary text-start ms-1">
+            <i class="ti ti-bell-cog me-1"></i>
+            {{ __('Notification Settings', 'cronguard') }}
+        </a>
+    </div>
+</div>
+
+<div class="form-field row align-items-center col-12 mb-2">
+    <label class="col-form-label col-xxl-2 text-xxl-end">
+        {{ __('Email Recipients', 'cronguard') }}
+    </label>
+
+    <div class="col-xxl-10 field-container text-start">
+        {% if recipients is empty %}
+            <div class="alert bg-warning d-flex align-items-center justify-content-between">
+                {% if has_original_group %}
+                    No recipients set up yet
+                {% endif %}
+                <a href="{{ recipients_url }}" class="btn btn-primary text-start">
+                    <i class="ti ti-mail-cog me-1"></i>
+                    {{ __('Setup Recipients', 'cronguard') }}
+                </a>
+            </div>
+        {% else %}
+            {% for user in recipients %}
+                <a href="{{ cfg_glpi.url_base }}/front/user.form.php?id={{ user.id }}"
+                   class="btn btn-sm btn-secondary me-1">
+                    <i class="ti ti-user me-1"></i>
+                    {{ user.name }} &lt;{{ user.email }}&gt;
+                </a>
+            {% endfor %}
+            <a href="{{ recipients_url }}" class="btn btn-sm btn-primary text-start">
+                <i class="ti ti-mail-cog me-1"></i>
+                {{ __('Change Recipients', 'cronguard') }}
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="form-field row align-items-center col-12 mb-2">
+    <label class="col-form-label col-xxl-2 text-xxl-end">
+        {{ __('Email Template', 'cronguard') }}
+    </label>
+
+    <div class="col-xxl-10 field-container text-start">
+        <a href="{{ template_url }}" class="btn btn-sm btn-primary text-start">
+            <i class="ti ti-template me-1"></i>
+            {{ __('Email template', 'cronguard') }}
+        </a>
+    </div>
+</div>
+
 <div class="hr-text">
     <i class="ti ti-stopwatch"></i>
     <span>{{ __('CronGuard Cron Job Examples', 'cronguard') }}</span>
 </div>
+
+<div class="alert alert-info d-flex align-items-center text-start">
+    <i class="ti ti-info-circle me-2 mt-1"></i>
+    <div>
+        <strong>Recommended for maximum reliability</strong><br>
+
+        CronGuard already monitors stuck CronTasks using its own GLPI CronTask.
+        However, if the CronGuard CronTask itself becomes stuck, it cannot recover automatically.
+        Running the standalone CronGuard PHP script as a system cron job provides an independent watchdog
+        that can recover CronGuard even in this situation.
+
+        <br><br>
+
+        If your hosting provider does not allow creating system cron jobs, CronGuard will still work using
+        the built-in GLPI CronTask, but the additional system cron job is recommended whenever possible.
+    </div>
+</div>
+
 <div class="row">
     <div class="form-field row align-items-center col-12 col-xxl-6 col-sm-6  mb-2">
         <label class="col-form-label col-xxl-5 text-xxl-end " for="cron-job-php-file">
@@ -79,68 +175,4 @@
             </div>
         </div>
     {% endfor %}
-</div>
-
-<div class="hr-text">
-    <i class="ti ti-bell"></i>
-    <span>{{ __('CronGuard Notifications', 'cronguard') }}</span>
-</div>
-
-<div class="form-field row align-items-center col-12 mb-2">
-    <label class="col-form-label col-xxl-2 text-xxl-end">
-        {{ __('Email Notification', 'cronguard') }}
-    </label>
-
-    <div class="col-xxl-7 field-container text-start">
-        {{ notification.name }}
-        <a href="{{ notification.url }}" class="btn btn-sm btn-primary text-start ms-1">
-            <i class="ti ti-bell-cog me-1"></i>
-            {{ __('Notification Settings', 'cronguard') }}
-        </a>
-    </div>
-</div>
-
-<div class="form-field row align-items-center col-12 mb-2">
-    <label class="col-form-label col-xxl-2 text-xxl-end">
-        {{ __('Email Recipients', 'cronguard') }}
-    </label>
-
-    <div class="col-xxl-7 field-container text-start">
-        {% if recipients is empty %}
-            <div class="alert bg-warning d-flex align-items-center justify-content-between">
-                {% if has_original_group %}
-                    No recipients set up yet
-                {% endif %}
-                <a href="{{ recipients_url }}" class="btn btn-primary text-start">
-                    <i class="ti ti-mail-cog me-1"></i>
-                    {{ __('Setup Recipients', 'cronguard') }}
-                </a>
-            </div>
-        {% else %}
-            {% for user in recipients %}
-                <a href="{{ cfg_glpi.url_base }}/front/user.form.php?id={{ user.id }}"
-                   class="btn btn-sm btn-secondary me-1">
-                    <i class="ti ti-user me-1"></i>
-                    {{ user.name }} &lt;{{ user.email }}&gt;
-                </a>
-            {% endfor %}
-            <a href="{{ recipients_url }}" class="btn btn-sm btn-primary text-start">
-                <i class="ti ti-mail-cog me-1"></i>
-                {{ __('Change Recipients', 'cronguard') }}
-            </a>
-        {% endif %}
-    </div>
-</div>
-
-<div class="form-field row align-items-center col-12 mb-2">
-    <label class="col-form-label col-xxl-2 text-xxl-end">
-        {{ __('Email Template', 'cronguard') }}
-    </label>
-
-    <div class="col-xxl-7 field-container text-start">
-        <a href="{{ template_url }}" class="btn btn-sm btn-primary text-start">
-            <i class="ti ti-template me-1"></i>
-            {{ __('Email template', 'cronguard') }}
-        </a>
-    </div>
 </div>

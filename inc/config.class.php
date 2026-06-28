@@ -196,6 +196,12 @@ SQL;
         $notification = new Notification();
         $notification->getFromDB($notification_id);
 
+        $task = self::getCronTask();
+        $task_url = "{$CFG_GLPI['url_base']}/front/crontask.form.php?" . http_build_query([
+                'id' => $task->getID(),
+                'forcetab' => 'CronTask$main'
+            ]);
+
         TemplateRenderer::getInstance()->display(
             '@cronguard/config.html.twig',
             [
@@ -211,6 +217,11 @@ SQL;
 
                 'recipients_url' => $has_original_group ? $group_url : $notification_url(['forcetab' => 'NotificationTarget$1']),
                 'template_url' => $notification_url(['forcetab' => 'Notification_NotificationTemplate$1']),
+
+                'task' => [
+                    'frequency' => $task->getField('frequency'),
+                    'url' => $task_url
+                ],
 
                 'cfg_glpi' => $CFG_GLPI,
                 'cron_jobs' => self::getCronJobExamples(),
