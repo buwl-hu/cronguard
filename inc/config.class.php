@@ -127,7 +127,7 @@ SQL;
         $notification_template = new NotificationTemplate();
         $notification_template_id = $notification_template->add([
             'name' => 'CronTask Restarted (CronGuard)',
-            'itemtype' => Ticket::class
+            'itemtype' => CronTask::class
         ]);
 
         $html = file_get_contents(__DIR__ . '/../templates/notification.html');

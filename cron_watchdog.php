@@ -4,6 +4,8 @@ $config_file = __DIR__ . '/../../config/config_db.php';
 
 if (!file_exists($config_file)) {
     die("Config file not found: " . $config_file . PHP_EOL);
+} else {
+    echo 'Config found' . PHP_EOL;
 }
 
 $content = file_get_contents($config_file);
@@ -24,6 +26,8 @@ $db_name = extractValue($content, 'dbdefault');
 
 if (!$db_host || !$db_user || !$db_name) {
     die("Missing DB config values" . PHP_EOL);
+} else {
+    echo 'DB config found' . PHP_EOL;
 }
 
 const CRONGUARD_STATE_SLEEP = 0;
@@ -38,6 +42,7 @@ try {
 
     $cache_exists = file_exists($cache_file);
     $cache = $cache_exists ? json_decode(file_get_contents($cache_file), true) : [];
+    if (!is_array($cache)) $cache = [];
 
     $cache['timeout'] = empty($cache['timeout']) ? 1800 : $cache['timeout'];
     $cache['state'] ??= CRONGUARD_STATE_SLEEP;
@@ -84,6 +89,7 @@ try {
 
     $stmt = $pdo->query($select_sql);
     $rows = $stmt->fetchAll();
+    echo count($rows) . ' stuck found' . PHP_EOL;
 
     $cache['report'] = [];
 
@@ -105,7 +111,8 @@ try {
         ];
     }
 
-    $cache['state'] = CRONGUARD_STATE_NEED_NOTIFICATION;
+    $cache['state'] = !empty($cache['report']) ? CRONGUARD_STATE_NEED_NOTIFICATION : CRONGUARD_STATE_SLEEP;
+    echo 'Stucks reported' . PHP_EOL;
 } catch (PDOException $e) {
     echo "DB error: " . $e->getMessage() . PHP_EOL;
     exit(1);
@@ -116,6 +123,7 @@ try {
         $cache_file,
         json_encode($cache, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
     );
+    echo 'Cache saved' . PHP_EOL;
 } catch (Throwable $e) {
     die('Cache save error: ' . $e->getMessage() . PHP_EOL);
 }

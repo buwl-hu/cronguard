@@ -29,9 +29,7 @@ class PluginCronguardCron
         $cache = self::getCache();
         $state = $cache['state'];
         if ($state == self::CRONGUARD_STATE_RUN) return true;
-
-        self::$cache['state'] = self::CRONGUARD_STATE_RUN;
-        self::saveCache();
+        self::setState(self::CRONGUARD_STATE_RUN);
 
         if ($state == self::CRONGUARD_STATE_NEED_NOTIFICATION && !empty($cache['report'])) {
             self::raiseNotificationEvents($cache['report']);
@@ -66,7 +64,10 @@ class PluginCronguardCron
                 'lastrun' => ['<', new \Glpi\DBAL\QueryExpression("NOW() - INTERVAL {$timeout} SECOND")]
             ], ['id', 'lastrun']);
 
-            if (empty($tasks)) return true;
+            if (empty($tasks)) {
+                self::setState(self::CRONGUARD_STATE_SLEEP);
+                return true;
+            }
 
             foreach ($tasks as $task) {
                 $success = $cron_task->update([
@@ -82,18 +83,27 @@ class PluginCronguardCron
                 self::saveCache();
             }
 
-            self::$cache['state'] = self::CRONGUARD_STATE_NEED_NOTIFICATION;
-            self::saveCache();
+            self::setState(self::CRONGUARD_STATE_NEED_NOTIFICATION);
             self::raiseNotificationEvents(self::$cache['report']);
-
-            self::$cache['state'] = self::CRONGUARD_STATE_SLEEP;
-            self::saveCache();
+            self::setState(self::CRONGUARD_STATE_SLEEP);
 
             return true;
         } catch (Throwable $e) {
             Toolbox::logInFile(PluginCronguardConfig::cronLogFile(true), "DB error: " . $e->getMessage() . PHP_EOL);
             return false;
         }
+    }
+
+    static function getState(): int
+    {
+        $cache = self::getCache();
+        return $cache['state'] ?? self::CRONGUARD_STATE_SLEEP;
+    }
+
+    protected static function setState(int $state): void
+    {
+        self::$cache['state'] = $state;
+        self::saveCache();
     }
 
     /**
@@ -111,6 +121,7 @@ class PluginCronguardCron
             if (!is_dir($dirname)) mkdir($dirname, 0777, true);
             $cache_exists = file_exists($cache_file);
             $cache = $cache_exists ? json_decode(file_get_contents($cache_file), true) : [];
+            if (!is_array($cache)) $cache = [];
             $cache['timeout'] = PluginCronguardConfig::get(PluginCronguardConfig::FIELD_STUCK_TIMEOUT);
             $cache['state'] ??= self::CRONGUARD_STATE_SLEEP;
 

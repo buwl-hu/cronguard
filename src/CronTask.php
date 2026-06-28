@@ -28,10 +28,22 @@ class CronTask
         if (!$cron_task instanceof \CronTask) return;
 
         $cache = \PluginCronguardCron::getCache();
-        $report = $cache['report'][$cron_task->getID()] ?? [];
+        $report = $cache['report'][$id = $cron_task->getID()] ?? [];
 
         $target->data['##crontask.restarted##'] = $report['restarted'] ?? false;
         $target->data['##crontask.lastrun##'] = $report['lastrun'] ?? '-';
+        $target->data['##crontask.name##'] = '';
+
+        if ($is_plug = isPluginItemType($cron_task->getField('itemtype'))) {
+            $target->data['##crontask.name##'] = $is_plug['plugin'] . " - ";
+        }
+
+        $target->data['##crontask.name##'] .= $cron_task->getName();
+        $target->data['##crontask.description##'] = $cron_task->getDescription($id);
+        $target->data['##crontask.url##'] = $target->formatURL(
+            \NotificationTarget::GLPI_USER,
+            "CronTask_" . $id
+        );
 
         $base_url = $CFG_GLPI['url_base'];
         $target->data['##glpi.logo##'] = "$base_url/pics/logos/logo-GLPI-250-white.png";
