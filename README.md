@@ -6,7 +6,7 @@ SPDX-License-Identifier: GPL-2.0-or-later
 
 # CronGuard GLPI Plugin
 
-![GitHub Pre-release](https://img.shields.io/github/v/release/buwl-hu/cronguard?include_prereleases&label=pre-release)
+![GitHub Latest Version](https://img.shields.io/github/v/release/buwl-hu/cronguard?include_prereleases)
 ![Status](https://img.shields.io/badge/status-beta-orange)
 ![GLPI](https://img.shields.io/badge/GLPI-11.x-blue)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4)
