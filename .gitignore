@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: 2026 2026 Buwl.hu
+# SPDX-FileCopyrightText: 2026 Buwl.hu
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 /.idea
 /vendor
 /composer.lock
+/reuse_update.sh

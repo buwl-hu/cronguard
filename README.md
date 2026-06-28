@@ -1,8 +1,13 @@
 <!--
 SPDX-FileCopyrightText: 2026 2026 Buwl.hu
+SPDX-FileCopyrightText: 2026 Buwl.hu
 
 SPDX-License-Identifier: GPL-2.0-or-later
 -->
+
+<p align="center">
+  <img src="pics/brand-logo.png" alt="CronGuard Logo" width="200">
+</p>
 
 # CronGuard GLPI Plugin
 
