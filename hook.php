@@ -5,7 +5,7 @@
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-if (!defined('PLUGIN_CRONGUARD_VERSION')) define('PLUGIN_CRONGUARD_VERSION', '0.0.1');
+if (!defined('PLUGIN_CRONGUARD_VERSION')) define('PLUGIN_CRONGUARD_VERSION', '0.0.2');
 
 function plugin_cronguard_install(): true
 {

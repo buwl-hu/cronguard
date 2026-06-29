@@ -7,7 +7,7 @@
 
 use Glpi\Plugin\Hooks;
 
-const PLUGIN_CRONGUARD_VERSION = '0.0.1';
+const PLUGIN_CRONGUARD_VERSION = '0.0.2';
 const PLUGIN_CRONGUARD_MIN_GLPI = '11.0.0';
 const PLUGIN_CRONGUARD_MAX_GLPI = '11.0.99';
 
@@ -40,7 +40,7 @@ function plugin_init_cronguard(): void
         NotificationTargetCronTask::class => [\GlpiPlugin\CronGuard\CronTask::class, 'addActionTargets']
     ];
 
-    $PLUGIN_HOOKS[Hooks::ITEM_GET_DATA]['sysinfo'] = [
+    $PLUGIN_HOOKS[Hooks::ITEM_GET_DATA]['cronguard'] = [
         NotificationTargetCronTask::class => [\GlpiPlugin\CronGuard\CronTask::class, 'addData']
     ];
 }
