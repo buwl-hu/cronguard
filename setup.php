@@ -50,7 +50,7 @@ function plugin_version_cronguard(): array
     return ['name' => __s('CronGuard', 'cronguard'),
         'version' => PLUGIN_CRONGUARD_VERSION,
         'author' => 'Peter Hegedűs, Buwl.hu',
-        'license' => 'GPLv3+',
+        'license' => 'GPLv2+',
         'homepage' => 'https://buwl.hu',
         'minGlpiVersion' => PLUGIN_CRONGUARD_MIN_GLPI,
         'requirements' => [
